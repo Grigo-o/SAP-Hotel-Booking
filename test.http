@@ -1,0 +1,64 @@
+### 1. Anonymous User -> GET /Hotels (Expect 401 Unauthorized)
+GET http://localhost:4004/odata/v4/hotel-booking/Hotels
+
+
+### 2. Admin User -> GET /Bookings (Expect 200 - Returns both bookings)
+GET http://localhost:4004/odata/v4/hotel-booking/Bookings
+Authorization: Basic admin:admin
+
+
+### 3. Manager User -> GET /Bookings (Expect 200 - Returns both bookings)
+GET http://localhost:4004/odata/v4/hotel-booking/Bookings
+Authorization: Basic manager:manager
+
+
+### 4. Manager User -> DELETE /Bookings(<id>) (Expect 403 Forbidden)
+DELETE http://localhost:4004/odata/v4/hotel-booking/Bookings(dddddddd-0000-0000-0000-000000000001)
+Authorization: Basic manager:manager
+
+
+### 5. Saba User -> GET /Bookings (Expect 200 - Only his booking dddddddd-...0001)
+GET http://localhost:4004/odata/v4/hotel-booking/Bookings
+Authorization: Basic saba:saba
+
+
+### 6. Saba User -> GET /Guests (Expect 200 - Only his guest record)
+GET http://localhost:4004/odata/v4/hotel-booking/Guests
+Authorization: Basic saba:saba
+
+
+### 7a. Saba -> create DRAFT booking
+# @name createDraft
+POST http://localhost:4004/odata/v4/hotel-booking/Bookings
+Authorization: Basic saba:saba
+Content-Type: application/json
+
+{
+  "room_ID": "aaaaaaa1-0000-0000-0000-000000000001",
+  "guest_ID": "cccccccc-0000-0000-0000-000000000002",
+  "checkIn": "2026-12-20",
+  "checkOut": "2026-12-23"
+}
+
+
+### 7b. Saba -> ACTIVATE the draft (handlers run here: validation, overlap check, price, guest forced to Saba)
+POST http://localhost:4004/odata/v4/hotel-booking/Bookings(ID={{createDraft.response.body.ID}},IsActiveEntity=false)/HotelBookingService.draftActivate
+Authorization: Basic saba:saba
+Content-Type: application/json
+
+{}
+
+### 8. Saba User -> GET /Hotels (Expect 200 Allowed)
+GET http://localhost:4004/odata/v4/hotel-booking/Hotels
+Authorization: Basic saba:saba
+
+
+### 9. Saba User -> POST /Hotels (Expect 403 Forbidden)
+POST http://localhost:4004/odata/v4/hotel-booking/Hotels
+Authorization: Basic saba:saba
+Content-Type: application/json
+
+{
+  "name": "Unauthorized Hotel",
+  "city": "Test City"
+}

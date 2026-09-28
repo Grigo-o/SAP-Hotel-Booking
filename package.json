@@ -1,0 +1,62 @@
+{
+  "name": "hotel-booking",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "@sap/cds": "^10"
+  },
+  "devDependencies": {
+    "@cap-js/sqlite": "^3",
+    "cds-plugin-ui5": "^0.17.0"
+  },
+  "scripts": {
+    "start": "cds-serve",
+    "watch-bookings": "cds watch --open my.hotelbooking.bookings/index.html?sap-ui-xx-viewCache=false --livereload false"
+  },
+  "private": true,
+  "cds": {
+    "requires": {
+      "auth": {
+        "kind": "mocked",
+        "users": {
+          "admin": {
+            "password": "admin",
+            "roles": [
+              "Admin"
+            ]
+          },
+          "manager": {
+            "password": "manager",
+            "roles": [
+              "Manager"
+            ]
+          },
+          "saba": {
+            "password": "saba",
+            "roles": [
+              "Customer"
+            ],
+            "attr": {
+              "email": "saba.grigolia@example.com"
+            }
+          },
+          "john": {
+            "password": "john",
+            "roles": [
+              "Customer"
+            ],
+            "attr": {
+              "email": "john.smith@example.com"
+            }
+          }
+        }
+      }
+    }
+  },
+  "workspaces": [
+    "app/*"
+  ],
+  "sapux": [
+    "app/bookings"
+  ]
+}
